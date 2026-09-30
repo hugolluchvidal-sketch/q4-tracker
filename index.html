@@ -3,81 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Q4 2026 // Protocolo de Consolidación</title>
+  <!-- Soporte PWA -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Q4 Consolidación</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
     :root {
-      --bg: #090d16;
-      --card-bg: #131b2e;
-      --card-border: #1f293d;
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --accent: #3b82f6;
-      --accent-glow: rgba(59, 130, 246, 0.2);
-      --green: #10b981;
-      --yellow: #f59e0b;
-      --red: #ef4444;
+      --bg-page: #f4f4f5; /* Gris muy suave tipo Apple */
+      --card-bg: #ffffff;
+      --card-border: #e4e4e7;
+      --text-main: #18181b;
+      --text-muted: #71717a;
+      --accent-blue: #007aff; /* Azul Apple */
+      --accent-green: #34c759; /* Verde Apple Health */
+      --accent-red: #ff3b30;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+      --radius-lg: 16px;
+      --radius-md: 12px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 16px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 650px; display: flex; flex-direction: column; gap: 20px; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
     
+    body { 
+      background: var(--bg-page); 
+      color: var(--text-main); 
+      padding: 16px 12px 30px; 
+      display: flex; 
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { 
+      width: 100%; 
+      max-width: 600px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 16px; 
+    }
+    
+    /* Global Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+    }
+
     /* Header & Metrics */
-    .header { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 16px; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .title { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
-    .badge { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .progress-bar-bg { width: 100%; height: 8px; background: #1e293b; border-radius: 99px; overflow: hidden; margin-bottom: 16px; }
-    .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
-    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
-    .metric-box { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 10px; border-radius: 10px; }
-    .metric-val { font-size: 1.2rem; font-weight: 800; color: #fff; }
-    .metric-lbl { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.03em; color: #000; }
+    .badge { font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    
+    .progress-bar-bg { width: 100%; height: 10px; background: #f1f5f9; border-radius: 99px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #34c759, #30d158); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 99px; }
+    
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .metric-box { background: #f8fafc; border: 1px solid var(--card-border); padding: 12px; border-radius: var(--radius-md); text-align: center; }
+    .metric-val { font-size: 1.25rem; font-weight: 800; color: #000; letter-spacing: -0.02em; }
+    .metric-lbl { font-size: 0.7rem; font-weight: 500; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
 
     /* Controls Bar */
-    .controls { display: flex; gap: 10px; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; }
-    .controls input[type="date"] { background: #0f172a; border: 1px solid var(--card-border); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; flex-grow: 1; outline: none; }
-    .btn-quick { background: #1e293b; color: #fff; border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-    .btn-quick:active { background: #334155; }
+    .controls { display: flex; gap: 8px; align-items: center; padding: 12px; }
+    .controls input[type="date"] { background: #fff; border: 1px solid var(--card-border); color: var(--text-main); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 500; flex-grow: 1; outline: none; box-shadow: var(--shadow-sm); }
+    .btn-quick { background: #fff; color: var(--text-main); border: 1px solid var(--card-border); padding: 10px 16px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.15s; }
+    .btn-quick:active { background: #f1f5f9; }
 
     /* Habits Checkboxes */
-    .habits-list { display: flex; flex-direction: column; gap: 8px; }
-    .habit-card { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px 16px; border-radius: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none; }
-    .habit-card:hover { border-color: #334155; }
-    .habit-card.checked { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.4); }
-    .habit-info { display: flex; flex-direction: column; gap: 2px; }
-    .habit-title { font-size: 0.95rem; font-weight: 600; }
-    .habit-sub { font-size: 0.75rem; color: var(--text-muted); }
-    .custom-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #475569; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease; }
-    .habit-card.checked .custom-check { background: var(--green); border-color: var(--green); }
-    .custom-check svg { display: none; stroke: #fff; width: 14px; height: 14px; stroke-width: 3; fill: none; }
-    .habit-card.checked .custom-check svg { display: block; }
+    .habits-list { display: flex; flex-direction: column; gap: 10px; }
+    .habit-card { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; user-select: none; border: 2px solid transparent; background: #fff; box-shadow: var(--shadow-sm); }
+    .habit-card:active { transform: scale(0.98); }
+    
+    /* Checked State */
+    .habit-card.checked { border-color: var(--accent-green); background: #f0fdf4; box-shadow: 0 2px 8px rgba(52, 199, 89, 0.15); }
+    
+    .habit-info { display: flex; flex-direction: column; gap: 3px; }
+    .habit-title { font-size: 1rem; font-weight: 600; color: var(--text-main); transition: color 0.2s; }
+    .habit-sub { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; }
+    
+    /* Custom Checkmark */
+    .custom-check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: #fff; }
+    .habit-card.checked .custom-check { background: var(--accent-green); border-color: var(--accent-green); transform: scale(1.05); }
+    .custom-check svg { display: none; stroke: #fff; width: 14px; height: 14px; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .habit-card.checked .custom-check svg { display: block; animation: pop 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
     /* Screen Time Input */
-    .screen-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .screen-input-wrapper { display: flex; align-items: center; gap: 8px; }
-    .screen-input { width: 75px; background: #0f172a; border: 1px solid var(--card-border); color: #fff; padding: 8px; border-radius: 8px; text-align: center; font-size: 1rem; font-weight: 700; outline: none; }
-    .screen-tag { font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
-    .tag-ok { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .tag-fail { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .screen-card { background: #fff; padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); border: 1px solid var(--card-border); }
+    .screen-input-wrapper { display: flex; align-items: center; gap: 10px; }
+    .screen-input { width: 70px; background: #f8fafc; border: 1px solid var(--card-border); color: #000; padding: 10px; border-radius: 8px; text-align: center; font-size: 1rem; font-weight: 700; outline: none; }
+    .screen-input:focus { border-color: var(--accent-blue); }
+    .screen-tag { font-size: 0.75rem; font-weight: 700; padding: 5px 10px; border-radius: 6px; }
+    .tag-ok { background: #f0fdf4; color: #16a34a; }
+    .tag-fail { background: #fef2f2; color: #ef4444; }
 
     /* Chart Section */
-    .chart-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 16px; border-radius: 14px; }
-    .chart-title { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
-    .svg-chart { width: 100%; height: 140px; display: block; overflow: visible; }
+    .chart-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em; }
+    .svg-chart { width: 100%; height: 160px; display: block; overflow: visible; }
 
     /* Action Button */
-    .btn-save { background: var(--accent); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px var(--accent-glow); transition: filter 0.15s ease; text-align: center; }
-    .btn-save:active { filter: brightness(0.85); }
-    .notification { text-align: center; font-size: 0.8rem; color: var(--green); height: 16px; opacity: 0; transition: opacity 0.2s ease; }
+    .btn-save { background: var(--text-main); color: #fff; border: none; padding: 16px; border-radius: var(--radius-md); font-size: 1.05rem; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-md); transition: all 0.2s; text-align: center; margin-top: 8px; }
+    .btn-save:active { transform: scale(0.98); background: #000; }
+    .notification { text-align: center; font-size: 0.85rem; font-weight: 500; color: var(--accent-green); height: 20px; opacity: 0; transition: opacity 0.3s ease; margin-bottom: -8px; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <!-- Header / KPIs -->
-  <div class="header">
+  <div class="card">
     <div class="header-top">
-      <div class="title">Q4 Discipline Tracker</div>
+      <div class="title">Q4 Tracker</div>
       <div class="badge" id="statusBadge">0 / 644 pts</div>
     </div>
     <div class="progress-bar-bg">
@@ -86,15 +126,15 @@
     <div class="metrics-grid">
       <div class="metric-box">
         <div class="metric-val" id="kpiScore">0%</div>
-        <div class="metric-lbl">Cumplimiento (≥85%)</div>
+        <div class="metric-lbl">Cumplimiento</div>
       </div>
       <div class="metric-box">
         <div class="metric-val" id="kpiDays">0</div>
-        <div class="metric-lbl">Días Guardados</div>
+        <div class="metric-lbl">Días Activos</div>
       </div>
       <div class="metric-box">
         <div class="metric-val" id="kpiStreak">0</div>
-        <div class="metric-lbl">Racha Activa</div>
+        <div class="metric-lbl">Racha Actual</div>
       </div>
     </div>
   </div>
@@ -113,66 +153,54 @@
         <div class="habit-title">10.000 Pasos</div>
         <div class="habit-sub">Actividad física base diaria</div>
       </div>
-      <div class="custom-check" id="check-pasos">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+      <div class="custom-check" id="check-pasos"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
     </div>
 
     <div class="habit-card" onclick="toggleHabit('entrenamiento')">
       <div class="habit-info">
         <div class="habit-title">Entrenamiento ≥ 45 min</div>
-        <div class="habit-sub">Gimnasio, baloncesto o movilidad intensa</div>
+        <div class="habit-sub">Fuerza, baloncesto o movilidad</div>
       </div>
-      <div class="custom-check" id="check-entrenamiento">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+      <div class="custom-check" id="check-entrenamiento"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
     </div>
 
     <div class="habit-card" onclick="toggleHabit('nutricion')">
       <div class="habit-info">
         <div class="habit-title">Nutrición Estructurada</div>
-        <div class="habit-sub">Sin ultraprocesados ni alcohol imprevisto</div>
+        <div class="habit-sub">Sin ultraprocesados ni desvíos</div>
       </div>
-      <div class="custom-check" id="check-nutricion">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+      <div class="custom-check" id="check-nutricion"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
     </div>
 
     <div class="habit-card" onclick="toggleHabit('agua')">
       <div class="habit-info">
         <div class="habit-title">Agua (3.8 Litros)</div>
-        <div class="habit-sub">1 galón diario de hidratación</div>
+        <div class="habit-sub">Hidratación estricta</div>
       </div>
-      <div class="custom-check" id="check-agua">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+      <div class="custom-check" id="check-agua"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
     </div>
 
     <div class="habit-card" onclick="toggleHabit('lectura')">
       <div class="habit-info">
         <div class="habit-title">Lectura (10 páginas)</div>
-        <div class="habit-sub">Libro físico técnico o no ficción</div>
+        <div class="habit-sub">Libro físico de no ficción</div>
       </div>
-      <div class="custom-check" id="check-lectura">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+      <div class="custom-check" id="check-lectura"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
     </div>
 
     <div class="habit-card" onclick="toggleHabit('foto')">
       <div class="habit-info">
         <div class="habit-title">Foto de Progreso</div>
-        <div class="habit-sub">Misma perspectiva y luz</div>
+        <div class="habit-sub">Registro visual diario</div>
       </div>
-      <div class="custom-check" id="check-foto">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
+      <div class="custom-check" id="check-foto"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
     </div>
 
     <!-- Screen Time -->
     <div class="screen-card">
       <div class="habit-info">
-        <div class="habit-title">Uso de Pantalla (Horas)</div>
-        <div class="habit-sub" id="screenLimitDesc">Límite: ≤ 3.0h (Entre semana)</div>
+        <div class="habit-title">Horas de Pantalla</div>
+        <div class="habit-sub" id="screenLimitDesc">Límite: ≤ 3.0h (Semana)</div>
       </div>
       <div class="screen-input-wrapper">
         <input type="number" step="0.1" min="0" max="24" id="screenHours" class="screen-input" placeholder="0.0" oninput="evalScreen()">
@@ -181,28 +209,24 @@
     </div>
   </div>
 
-  <!-- Progress Chart (SVG Nativo sin librerías) -->
-  <div class="chart-card">
-    <div class="chart-title">Evolución de Puntos Diarios (0 - 7)</div>
+  <!-- Progress Chart -->
+  <div class="card">
+    <div class="chart-title">Evolución de Puntos (0-7)</div>
     <svg class="svg-chart" id="chartSvg"></svg>
   </div>
 
-  <div class="notification" id="notif">Guardado en LocalStorage correctamente</div>
+  <div class="notification" id="notif">Guardado correctamente</div>
   <button class="btn-save" onclick="saveCurrentDay()">Guardar Jornada</button>
 </div>
 
 <script>
-  // Estructura de almacenamiento en LocalStorage
+  // Lógica y LocalStorage idéntica al archivo anterior
   const STORAGE_KEY = 'Q4_DISCIPLINE_DATA_2026';
   let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-
-  // Estado del formulario actual
   const habits = ['pasos', 'entrenamiento', 'nutricion', 'agua', 'lectura', 'foto'];
   let currentChecks = { pasos: false, entrenamiento: false, nutricion: false, agua: false, lectura: false, foto: false };
-
   const dateInput = document.getElementById('dateInput');
 
-  // Inicializar fecha en "ayer"
   function setDateOffset(offset) {
     const d = new Date();
     d.setDate(d.getDate() + offset);
@@ -223,11 +247,8 @@
 
   function updateHabitUI(id) {
     const el = document.getElementById('check-' + id).parentElement;
-    if (currentChecks[id]) {
-      el.classList.add('checked');
-    } else {
-      el.classList.remove('checked');
-    }
+    if (currentChecks[id]) { el.classList.add('checked'); } 
+    else { el.classList.remove('checked'); }
   }
 
   function evalScreen() {
@@ -236,9 +257,9 @@
     const weekend = isWeekend(dateStr);
     const limit = weekend ? 5.0 : 3.0;
 
-    document.getElementById('screenLimitDesc').innerText = `Límite: ≤ ${limit.toFixed(1)}h (${weekend ? 'Fin de semana' : 'Entre semana'})`;
-
+    document.getElementById('screenLimitDesc').innerText = `Límite: ≤ ${limit.toFixed(1)}h (${weekend ? 'Finde' : 'Semana'})`;
     const statusEl = document.getElementById('screenStatus');
+    
     if (!isNaN(hours) && hours <= limit) {
       statusEl.className = 'screen-tag tag-ok';
       statusEl.innerText = '+1 pt';
@@ -292,7 +313,7 @@
     let totalPts = 0;
     entries.forEach(e => totalPts += (e.points || 0));
 
-    const totalTarget = 92 * 7; // 644
+    const totalTarget = 92 * 7; 
     const pct = savedDays > 0 ? ((totalPts / (savedDays * 7)) * 100).toFixed(1) : '0.0';
 
     document.getElementById('statusBadge').innerText = `${totalPts} / ${totalTarget} pts`;
@@ -300,7 +321,6 @@
     document.getElementById('kpiScore').innerText = `${pct}%`;
     document.getElementById('kpiDays').innerText = savedDays;
 
-    // Calcular racha actual
     let streak = 0;
     const sortedDates = Object.keys(db).sort().reverse();
     for (let d of sortedDates) {
@@ -315,15 +335,14 @@
     const sortedDates = Object.keys(db).sort();
     
     if (sortedDates.length < 2) {
-      svg.innerHTML = '<text x="50%" y="50%" fill="#475569" font-size="12" text-anchor="middle">Guarda al menos 2 días para ver la línea de progreso</text>';
+      svg.innerHTML = '<text x="50%" y="50%" fill="#a1a1aa" font-size="13" font-weight="500" text-anchor="middle">Guarda 2 días para ver la gráfica</text>';
       return;
     }
 
-    const width = svg.clientWidth || 580;
-    const height = 130;
-    const padding = 20;
+    const width = svg.clientWidth || 550;
+    const height = 150;
+    const padding = 10;
 
-    // Puntos (0 a 7 en Y)
     const pointsData = sortedDates.map((d, i) => {
       const x = padding + (i / (sortedDates.length - 1)) * (width - 2 * padding);
       const y = height - padding - ((db[d].points || 0) / 7) * (height - 2 * padding);
@@ -336,18 +355,16 @@
     }
 
     let circlesSvg = pointsData.map(p => `
-      <circle cx="${p.x}" cy="${p.y}" r="4" fill="#3b82f6" stroke="#090d16" stroke-width="2"/>
+      <circle cx="${p.x}" cy="${p.y}" r="4.5" fill="#34c759" stroke="#ffffff" stroke-width="2.5"/>
     `).join('');
 
     svg.innerHTML = `
-      <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#1f293d" stroke-width="1" />
-      <line x1="${padding}" y1="${padding}" x2="${width - padding}" y2="${padding}" stroke="#1f293d" stroke-dasharray="3" stroke-width="1" />
-      <path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+      <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#e4e4e7" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="${pathD}" fill="none" stroke="#34c759" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
       ${circlesSvg}
     `;
   }
 
-  // Inicialización
   setDateOffset(-1);
   updateGlobalMetrics();
   renderChart();
