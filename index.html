@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Q4 2026 // Protocolo de Consolidación</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #131b2e;
+      --card-border: #1f293d;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.2);
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 16px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 650px; display: flex; flex-direction: column; gap: 20px; }
+    
+    /* Header & Metrics */
+    .header { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 16px; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .title { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .badge { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .progress-bar-bg { width: 100%; height: 8px; background: #1e293b; border-radius: 99px; overflow: hidden; margin-bottom: 16px; }
+    .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+    .metric-box { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 10px; border-radius: 10px; }
+    .metric-val { font-size: 1.2rem; font-weight: 800; color: #fff; }
+    .metric-lbl { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Controls Bar */
+    .controls { display: flex; gap: 10px; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; }
+    .controls input[type="date"] { background: #0f172a; border: 1px solid var(--card-border); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; flex-grow: 1; outline: none; }
+    .btn-quick { background: #1e293b; color: #fff; border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .btn-quick:active { background: #334155; }
+
+    /* Habits Checkboxes */
+    .habits-list { display: flex; flex-direction: column; gap: 8px; }
+    .habit-card { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px 16px; border-radius: 12px; cursor: pointer; transition: all 0.15s ease; user-select: none; }
+    .habit-card:hover { border-color: #334155; }
+    .habit-card.checked { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.4); }
+    .habit-info { display: flex; flex-direction: column; gap: 2px; }
+    .habit-title { font-size: 0.95rem; font-weight: 600; }
+    .habit-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .custom-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #475569; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease; }
+    .habit-card.checked .custom-check { background: var(--green); border-color: var(--green); }
+    .custom-check svg { display: none; stroke: #fff; width: 14px; height: 14px; stroke-width: 3; fill: none; }
+    .habit-card.checked .custom-check svg { display: block; }
+
+    /* Screen Time Input */
+    .screen-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .screen-input-wrapper { display: flex; align-items: center; gap: 8px; }
+    .screen-input { width: 75px; background: #0f172a; border: 1px solid var(--card-border); color: #fff; padding: 8px; border-radius: 8px; text-align: center; font-size: 1rem; font-weight: 700; outline: none; }
+    .screen-tag { font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+    .tag-ok { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .tag-fail { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+    /* Chart Section */
+    .chart-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 16px; border-radius: 14px; }
+    .chart-title { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
+    .svg-chart { width: 100%; height: 140px; display: block; overflow: visible; }
+
+    /* Action Button */
+    .btn-save { background: var(--accent); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px var(--accent-glow); transition: filter 0.15s ease; text-align: center; }
+    .btn-save:active { filter: brightness(0.85); }
+    .notification { text-align: center; font-size: 0.8rem; color: var(--green); height: 16px; opacity: 0; transition: opacity 0.2s ease; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header / KPIs -->
+  <div class="header">
+    <div class="header-top">
+      <div class="title">Q4 Discipline Tracker</div>
+      <div class="badge" id="statusBadge">0 / 644 pts</div>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="globalProgress"></div>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-val" id="kpiScore">0%</div>
+        <div class="metric-lbl">Cumplimiento (≥85%)</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="kpiDays">0</div>
+        <div class="metric-lbl">Días Guardados</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="kpiStreak">0</div>
+        <div class="metric-lbl">Racha Activa</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date selector -->
+  <div class="controls">
+    <input type="date" id="dateInput" min="2026-10-01" max="2026-12-31">
+    <button class="btn-quick" onclick="setDateOffset(-1)">Ayer</button>
+    <button class="btn-quick" onclick="setDateOffset(0)">Hoy</button>
+  </div>
+
+  <!-- Habits Checklists -->
+  <div class="habits-list">
+    <div class="habit-card" onclick="toggleHabit('pasos')">
+      <div class="habit-info">
+        <div class="habit-title">10.000 Pasos</div>
+        <div class="habit-sub">Actividad física base diaria</div>
+      </div>
+      <div class="custom-check" id="check-pasos">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+
+    <div class="habit-card" onclick="toggleHabit('entrenamiento')">
+      <div class="habit-info">
+        <div class="habit-title">Entrenamiento ≥ 45 min</div>
+        <div class="habit-sub">Gimnasio, baloncesto o movilidad intensa</div>
+      </div>
+      <div class="custom-check" id="check-entrenamiento">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+
+    <div class="habit-card" onclick="toggleHabit('nutricion')">
+      <div class="habit-info">
+        <div class="habit-title">Nutrición Estructurada</div>
+        <div class="habit-sub">Sin ultraprocesados ni alcohol imprevisto</div>
+      </div>
+      <div class="custom-check" id="check-nutricion">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+
+    <div class="habit-card" onclick="toggleHabit('agua')">
+      <div class="habit-info">
+        <div class="habit-title">Agua (3.8 Litros)</div>
+        <div class="habit-sub">1 galón diario de hidratación</div>
+      </div>
+      <div class="custom-check" id="check-agua">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+
+    <div class="habit-card" onclick="toggleHabit('lectura')">
+      <div class="habit-info">
+        <div class="habit-title">Lectura (10 páginas)</div>
+        <div class="habit-sub">Libro físico técnico o no ficción</div>
+      </div>
+      <div class="custom-check" id="check-lectura">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+
+    <div class="habit-card" onclick="toggleHabit('foto')">
+      <div class="habit-info">
+        <div class="habit-title">Foto de Progreso</div>
+        <div class="habit-sub">Misma perspectiva y luz</div>
+      </div>
+      <div class="custom-check" id="check-foto">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+
+    <!-- Screen Time -->
+    <div class="screen-card">
+      <div class="habit-info">
+        <div class="habit-title">Uso de Pantalla (Horas)</div>
+        <div class="habit-sub" id="screenLimitDesc">Límite: ≤ 3.0h (Entre semana)</div>
+      </div>
+      <div class="screen-input-wrapper">
+        <input type="number" step="0.1" min="0" max="24" id="screenHours" class="screen-input" placeholder="0.0" oninput="evalScreen()">
+        <span class="screen-tag tag-fail" id="screenStatus">0 pts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Chart (SVG Nativo sin librerías) -->
+  <div class="chart-card">
+    <div class="chart-title">Evolución de Puntos Diarios (0 - 7)</div>
+    <svg class="svg-chart" id="chartSvg"></svg>
+  </div>
+
+  <div class="notification" id="notif">Guardado en LocalStorage correctamente</div>
+  <button class="btn-save" onclick="saveCurrentDay()">Guardar Jornada</button>
+</div>
+
+<script>
+  // Estructura de almacenamiento en LocalStorage
+  const STORAGE_KEY = 'Q4_DISCIPLINE_DATA_2026';
+  let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+  // Estado del formulario actual
+  const habits = ['pasos', 'entrenamiento', 'nutricion', 'agua', 'lectura', 'foto'];
+  let currentChecks = { pasos: false, entrenamiento: false, nutricion: false, agua: false, lectura: false, foto: false };
+
+  const dateInput = document.getElementById('dateInput');
+
+  // Inicializar fecha en "ayer"
+  function setDateOffset(offset) {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    dateInput.value = d.toISOString().split('T')[0];
+    loadDateData();
+  }
+
+  function isWeekend(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    const day = d.getDay();
+    return day === 0 || day === 6;
+  }
+
+  function toggleHabit(id) {
+    currentChecks[id] = !currentChecks[id];
+    updateHabitUI(id);
+  }
+
+  function updateHabitUI(id) {
+    const el = document.getElementById('check-' + id).parentElement;
+    if (currentChecks[id]) {
+      el.classList.add('checked');
+    } else {
+      el.classList.remove('checked');
+    }
+  }
+
+  function evalScreen() {
+    const hours = parseFloat(document.getElementById('screenHours').value);
+    const dateStr = dateInput.value;
+    const weekend = isWeekend(dateStr);
+    const limit = weekend ? 5.0 : 3.0;
+
+    document.getElementById('screenLimitDesc').innerText = `Límite: ≤ ${limit.toFixed(1)}h (${weekend ? 'Fin de semana' : 'Entre semana'})`;
+
+    const statusEl = document.getElementById('screenStatus');
+    if (!isNaN(hours) && hours <= limit) {
+      statusEl.className = 'screen-tag tag-ok';
+      statusEl.innerText = '+1 pt';
+      return 1;
+    } else {
+      statusEl.className = 'screen-tag tag-fail';
+      statusEl.innerText = '0 pts';
+      return 0;
+    }
+  }
+
+  function loadDateData() {
+    const dateStr = dateInput.value;
+    const data = db[dateStr] || { pasos: false, entrenamiento: false, nutricion: false, agua: false, lectura: false, foto: false, screenHours: '' };
+
+    habits.forEach(h => {
+      currentChecks[h] = !!data[h];
+      updateHabitUI(h);
+    });
+
+    document.getElementById('screenHours').value = data.screenHours !== undefined ? data.screenHours : '';
+    evalScreen();
+  }
+
+  function saveCurrentDay() {
+    const dateStr = dateInput.value;
+    if (!dateStr) return;
+
+    const screenPts = evalScreen();
+    let totalPts = screenPts;
+    habits.forEach(h => { if(currentChecks[h]) totalPts++; });
+
+    db[dateStr] = {
+      ...currentChecks,
+      screenHours: document.getElementById('screenHours').value,
+      points: totalPts
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    updateGlobalMetrics();
+    renderChart();
+
+    const notif = document.getElementById('notif');
+    notif.style.opacity = '1';
+    setTimeout(() => { notif.style.opacity = '0'; }, 2000);
+  }
+
+  function updateGlobalMetrics() {
+    const entries = Object.values(db);
+    const savedDays = entries.length;
+    let totalPts = 0;
+    entries.forEach(e => totalPts += (e.points || 0));
+
+    const totalTarget = 92 * 7; // 644
+    const pct = savedDays > 0 ? ((totalPts / (savedDays * 7)) * 100).toFixed(1) : '0.0';
+
+    document.getElementById('statusBadge').innerText = `${totalPts} / ${totalTarget} pts`;
+    document.getElementById('globalProgress').style.width = Math.min((totalPts / totalTarget) * 100, 100) + '%';
+    document.getElementById('kpiScore').innerText = `${pct}%`;
+    document.getElementById('kpiDays').innerText = savedDays;
+
+    // Calcular racha actual
+    let streak = 0;
+    const sortedDates = Object.keys(db).sort().reverse();
+    for (let d of sortedDates) {
+      if (db[d].points >= 5) streak++;
+      else break;
+    }
+    document.getElementById('kpiStreak').innerText = streak;
+  }
+
+  function renderChart() {
+    const svg = document.getElementById('chartSvg');
+    const sortedDates = Object.keys(db).sort();
+    
+    if (sortedDates.length < 2) {
+      svg.innerHTML = '<text x="50%" y="50%" fill="#475569" font-size="12" text-anchor="middle">Guarda al menos 2 días para ver la línea de progreso</text>';
+      return;
+    }
+
+    const width = svg.clientWidth || 580;
+    const height = 130;
+    const padding = 20;
+
+    // Puntos (0 a 7 en Y)
+    const pointsData = sortedDates.map((d, i) => {
+      const x = padding + (i / (sortedDates.length - 1)) * (width - 2 * padding);
+      const y = height - padding - ((db[d].points || 0) / 7) * (height - 2 * padding);
+      return { x, y, pts: db[d].points || 0 };
+    });
+
+    let pathD = `M ${pointsData[0].x} ${pointsData[0].y}`;
+    for (let i = 1; i < pointsData.length; i++) {
+      pathD += ` L ${pointsData[i].x} ${pointsData[i].y}`;
+    }
+
+    let circlesSvg = pointsData.map(p => `
+      <circle cx="${p.x}" cy="${p.y}" r="4" fill="#3b82f6" stroke="#090d16" stroke-width="2"/>
+    `).join('');
+
+    svg.innerHTML = `
+      <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#1f293d" stroke-width="1" />
+      <line x1="${padding}" y1="${padding}" x2="${width - padding}" y2="${padding}" stroke="#1f293d" stroke-dasharray="3" stroke-width="1" />
+      <path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+      ${circlesSvg}
+    `;
+  }
+
+  // Inicialización
+  setDateOffset(-1);
+  updateGlobalMetrics();
+  renderChart();
+</script>
+</body>
+</html>
